@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>上码FY · 二维码生成与活码工作台</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">码</div>
+      <div>
+        <h1>上码FY</h1>
+        <p class="tagline">二维码生成 · 活码工作台</p>
+      </div>
+    </div>
+    <div class="author">by 小帆帆</div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="static">生成静态码</button>
+    <button class="tab" data-tab="dynamic">活码工作台</button>
+    <button class="tab" data-tab="batch">批量生码</button>
+  </nav>
+
+  <main>
+    <!-- ============ 静态码 ============ -->
+    <section id="tab-static" class="panel active">
+      <div class="workbench">
+        <div class="editor">
+          <div class="type-tabs" id="static-types"></div>
+          <div id="static-fields" class="fields"></div>
+
+          <div class="beautify">
+            <h3>美化</h3>
+            <div class="beautify-grid">
+              <label>前景色<input type="color" id="s-dark" value="#000000"></label>
+              <label>背景色<input type="color" id="s-light" value="#ffffff"></label>
+              <label>容错率
+                <select id="s-ecc">
+                  <option value="L">L 7%</option>
+                  <option value="M" selected>M 15%</option>
+                  <option value="Q">Q 25%</option>
+                  <option value="H">H 30%</option>
+                </select>
+              </label>
+              <label>尺寸(px)<input type="number" id="s-width" value="400" min="120" max="1200" step="20"></label>
+              <label>边距<input type="number" id="s-margin" value="2" min="0" max="10"></label>
+              <label>中心Logo<input type="file" id="s-logo" accept="image/*"></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview">
+          <div class="qr-box">
+            <canvas id="static-canvas" width="400" height="400"></canvas>
+            <img id="static-logo-hidden" style="display:none">
+          </div>
+          <div class="actions">
+            <button class="btn primary" id="static-png">下载 PNG</button>
+            <button class="btn" id="static-svg">下载 SVG</button>
+            <button class="btn" id="static-copy">复制图片</button>
+          </div>
+          <p class="hint" id="static-hint">输入内容即时生成</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 活码工作台 ============ -->
+    <section id="tab-dynamic" class="panel">
+      <div class="workbench">
+        <div class="editor">
+          <input type="text" id="d-title" class="title-input" placeholder="活码标题（如：公司介绍 / 设备A巡检）">
+          <div class="type-tabs" id="dynamic-types"></div>
+          <div id="dynamic-fields" class="fields"></div>
+
+          <div class="beautify">
+            <h3>活码图案美化</h3>
+            <div class="beautify-grid">
+              <label>前景色<input type="color" id="d-dark" value="#000000"></label>
+              <label>背景色<input type="color" id="d-light" value="#ffffff"></label>
+              <label>容错率
+                <select id="d-ecc">
+                  <option value="L">L 7%</option>
+                  <option value="M" selected>M 15%</option>
+                  <option value="Q">Q 25%</option>
+                  <option value="H">H 30%</option>
+                </select>
+              </label>
+              <label>尺寸(px)<input type="number" id="d-width" value="400" min="120" max="1200" step="20"></label>
+              <label>边距<input type="number" id="d-margin" value="2" min="0" max="10"></label>
+              <label>中心Logo<input type="file" id="d-logo" accept="image/*"></label>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn primary" id="d-save">保存活码</button>
+            <button class="btn" id="d-reset">新建/清空</button>
+          </div>
+
+          <div id="d-result" class="result-card hidden">
+            <h4>✅ 活码已生成（图案固定，内容可随时改）</h4>
+            <canvas id="dynamic-canvas" width="400" height="400"></canvas>
+            <div class="link-row">
+              <input type="text" id="d-link" readonly>
+              <button class="btn small" id="d-copy-link">复制链接</button>
+            </div>
+            <a class="btn small ghost" id="d-open" target="_blank">打开扫码页</a>
+          </div>
+        </div>
+
+        <div class="list-pane">
+          <h3>我的活码</h3>
+          <div id="code-list" class="code-list">
+            <p class="empty">还没有活码，左侧创建一个吧～</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 批量生码 ============ -->
+    <section id="tab-batch" class="panel">
+      <div class="batch">
+        <div class="batch-input">
+          <h3>批量内容</h3>
+          <p class="hint">每行一个。格式：<code>标签|内容</code>（留空标签则整行作为内容）。例如：<br>设备A|https://example.com/a　设备B|https://example.com/b</p>
+          <textarea id="batch-text" placeholder="设备A|https://example.com/a&#10;设备B|https://example.com/b&#10;纯文本也行"></textarea>
+          <div class="actions">
+            <button class="btn primary" id="batch-gen">生成二维码</button>
+            <button class="btn" id="batch-clear">清空</button>
+          </div>
+        </div>
+        <div class="batch-grid" id="batch-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">上码FY · 由 小帆帆 搭建 · 本地运行，数据存于本机</footer>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
